@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: Rulecheck
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 1
+
+  flyway:
+    enabled: false
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update
+logging:
+  level:
+    org:
+      postgresql: DEBUG
+      springframework:
+        jdbc: DEBUG
+    com:
+      zaxxer:
+        hikari: DEBUG

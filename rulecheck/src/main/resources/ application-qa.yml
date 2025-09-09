@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    url: ${QA_DATASOURCE_URL}
+    username: ${QA_USERNAME}
+    password: ${QA_DB_PASSWORD}
