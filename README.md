@@ -13,6 +13,7 @@ RuleCheck is a FastAPI microservice designed for evaluating **rules**, **policie
 - Docker + Docker Compose for local development
 - Environment-specific settings
 - Unit testing with pytest
+- Run docker-compose up to start API + DB locally.
 
 ---
 
