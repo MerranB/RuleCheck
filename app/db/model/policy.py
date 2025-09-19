@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, DateTime
 from app.db.base import Base
 
-# A high-level document
+## A high-level document
 
 class Policy(Base):
     __tablename__ = "policies"
