@@ -29,5 +29,4 @@ class Settings(BaseSettings):
         case_sensitive = False
 
 
-# Singleton instance used across app
 settings = Settings()
