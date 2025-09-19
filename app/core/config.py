@@ -25,7 +25,7 @@ class Settings(BaseSettings):
 
     class Config:
 
-        env_file = f".env.{os.getenv('APP_ENV', 'dev')}"
+        env_file = f".env"
         case_sensitive = False
 
 
