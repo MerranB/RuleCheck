@@ -1,3 +1,4 @@
+uliweb-alembic
 structlog
 fastapi
 uvicorn
