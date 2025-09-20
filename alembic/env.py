@@ -4,6 +4,7 @@ from alembic.script import ScriptDirectory
 from sqlalchemy import create_engine
 from app.core.logging_config import setup_logging
 from app.db.database import Base
+from app.db import models  # noqa: F401
 from app.core.config import settings
 
 

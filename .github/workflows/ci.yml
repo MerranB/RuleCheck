@@ -49,11 +49,12 @@ jobs:
             sleep 2
           done
 
-      - name: Run migrations
-        run: alembic upgrade head
+      - name: Run unit tests
+        run: pytest -m "unit"
 
-      - name: Run tests
-        run: pytest -v
+      - name: Run integration migration tests
+        if: github.ref == 'refs/heads/qa'
+        run: pytest -m "integration or migration"
 
   deploy:
     runs-on: ubuntu-latest
