@@ -11,3 +11,5 @@ pydantic-settings
 pyyaml
 python-json-logger
 testcontainers[postgresql]
+ruff
+pre-commit

@@ -1,0 +1,12 @@
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "-ra -q"
+testpaths = [
+    "tests",
+]
+
+markers = [
+    "unit: marks unit tests (no external dependencies, fast)",
+    "integration: marks integration tests (requires DB, containers, or services)",
+    "migration: marks tests that check alembic migrations (deselect with '-m \"not migration\"')",
+]
