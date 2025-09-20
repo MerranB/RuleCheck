@@ -13,5 +13,3 @@ __pycache__/
 .vscode/
 .idea/
 
-# Alembic
-alembic/versions/*.py
