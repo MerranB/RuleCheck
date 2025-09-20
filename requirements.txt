@@ -1,3 +1,4 @@
+pytest
 uliweb-alembic
 structlog
 fastapi
@@ -9,3 +10,4 @@ pydantic
 pydantic-settings
 pyyaml
 python-json-logger
+testcontainers[postgresql]

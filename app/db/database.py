@@ -1,8 +1,10 @@
-from sqlalchemy import create_engine, text
-from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy import text
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.exc import OperationalError
-from app.core.config import settings
 from app.core.logging_config import logger
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker, Session
+from app.core.config import settings
 
 Base = declarative_base()
 
@@ -23,3 +25,11 @@ except OperationalError as e:
     raise
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+def get_db() -> Session:
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
