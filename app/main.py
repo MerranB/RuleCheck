@@ -3,9 +3,11 @@ from .api.monitoring import healthcheck
 from .api import action_submissions, audit_events, decisions, policies, rules
 from app.core.logging_config import setup_logging, logger
 from .core.error_handler import log_exceptions
+from contextlib import asynccontextmanager
 
 setup_logging()
 
+@asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Application is starting up...")
     yield
