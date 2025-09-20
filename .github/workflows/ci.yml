@@ -52,7 +52,7 @@ jobs:
       - name: Run unit tests
         run: pytest -m "unit"
 
-      - name: Run integration migration tests
+      - name: Run integration and migration tests
         if: github.ref == 'refs/heads/qa'
         run: pytest -m "integration or migration"
 

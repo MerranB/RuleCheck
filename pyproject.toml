@@ -7,6 +7,6 @@ testpaths = [
 
 markers = [
     "unit: marks unit tests (no external dependencies, fast)",
-    "integration: marks integration tests (requires DB, containers, or services)",
+    "integration: Tests that hit the DB or run API endpoints",
     "migration: marks tests that check alembic migrations (deselect with '-m \"not migration\"')",
 ]

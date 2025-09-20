@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.db.database import get_db
 
-# --- Postgres Fixture ---
+
 @pytest.fixture(scope="session")
 def postgres_container():
     with PostgresContainer("postgres:15") as postgres:
@@ -18,12 +18,12 @@ def postgres_container():
 
 @pytest.fixture(scope="session")
 def migrated_engine(postgres_container):
-    # Create SQLAlchemy engine
     engine = create_engine(postgres_container.get_connection_url())
 
-    # Run Alembic migrations against this test DB
     alembic_cfg = Config("alembic.ini")
-    alembic_cfg.set_main_option("sqlalchemy.url", postgres_container.get_connection_url())
+    alembic_cfg.set_main_option(
+        "sqlalchemy.url", postgres_container.get_connection_url()
+    )
     command.upgrade(alembic_cfg, "head")
 
     yield engine
@@ -49,6 +49,7 @@ def db_session(migrated_engine):
 @pytest.fixture()
 def client(db_session):
     """FastAPI test client that uses the test DB session."""
+
     def override_get_db():
         try:
             yield db_session
