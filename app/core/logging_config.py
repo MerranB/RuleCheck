@@ -2,20 +2,26 @@ import sys
 import structlog
 import logging
 
-LOG_FORMAT = (
-    "%(asctime)s [%(levelname)s] %(name)s - %(message)s"
-)
+from app.core.config import settings
+
+LOG_FORMAT = "%(asctime)s [%(levelname)s] %(name)s - %(message)s"
 
 def setup_logging():
+    numeric_level = getattr(logging, settings.log_level, logging.INFO)
+
     logging.basicConfig(
         format=LOG_FORMAT,
         stream=sys.stdout,
-        level=logging.INFO
-    )
-    structlog.configure(
-        processors=[
-            structlog.processors.JSONRenderer()
-        ]
+        level=getattr(logging, settings.log_level, logging.INFO),
+        force = True
     )
 
-logger = logging.getLogger("rulecheck")
+    structlog.configure(
+        wrapper_class=structlog.make_filtering_bound_logger(numeric_level),
+        processors=[
+            structlog.processors.JSONRenderer(),
+        ]
+    )
+    return logging.getLogger("rulecheck")
+
+logger = setup_logging()
