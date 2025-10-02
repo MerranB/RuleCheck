@@ -1,15 +1,17 @@
-from sqlalchemy import Column, Integer, String, DateTime, func
-from app.db.base import Base
-
-## A record of what happened — both the action submitted and the decision made.
+from sqlalchemy import Column, Integer, String, TIMESTAMP, ForeignKey
+from sqlalchemy.sql import func
+from app.db.database import Base
 
 
 class AuditEvent(Base):
     __tablename__ = "audit_events"
 
-    id = Column(Integer, primary_key=True)
-    submission_id = Column(String, unique=True, nullable=False)
-    decision_id = Column(String, nullable=True)
-    timestamp = Column(DateTime, server_default=func.now())
-    explanation = Column(String, nullable=True)
-    user = Column(String, nullable=True)
+    id = Column(Integer, primary_key=True, index=True)
+    submission_id = Column(
+        Integer, ForeignKey("action_submissions.id", ondelete="CASCADE")
+    )
+    decision_id = Column(Integer, ForeignKey("decisions.id", ondelete="CASCADE"))
+    actor_id = Column(Integer, nullable=True)
+    actor_role = Column(String, nullable=False)
+    action_type = Column(String, nullable=False)
+    timestamp = Column(TIMESTAMP(timezone=True), server_default=func.now())
