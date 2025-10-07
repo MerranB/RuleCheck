@@ -1,6 +1,6 @@
 import pytest
 from testcontainers.postgres import PostgresContainer
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
 from alembic import command
 from alembic.config import Config
@@ -12,32 +12,34 @@ from app.db.database import get_db
 
 @pytest.fixture(scope="session")
 def postgres_container():
+    """Spin up Postgres for the whole test session."""
     with PostgresContainer("postgres:15") as postgres:
         yield postgres
 
 
 @pytest.fixture(scope="session")
 def migrated_engine(postgres_container):
+    """Create engine and apply migrations once for test DB."""
     engine = create_engine(postgres_container.get_connection_url())
 
     alembic_cfg = Config("alembic.ini")
     alembic_cfg.set_main_option(
         "sqlalchemy.url", postgres_container.get_connection_url()
     )
-    command.upgrade(alembic_cfg, "head")
-
+    command.upgrade(alembic_cfg, "head")  # Apply migrations here
+    inspector = inspect(engine)
+    print("Tables in test DB:", inspector.get_table_names())
     yield engine
-
     engine.dispose()
 
 
-@pytest.fixture()
+@pytest.fixture
 def db_session(migrated_engine):
-    """Provide a clean database session for each test."""
+    """Provide a clean DB session per test, rolled back afterward."""
     connection = migrated_engine.connect()
     transaction = connection.begin()
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=connection)
-    session = SessionLocal()
+    session_local = sessionmaker(autocommit=False, autoflush=False, bind=connection)
+    session = session_local()
 
     yield session
 
@@ -46,9 +48,9 @@ def db_session(migrated_engine):
     connection.close()
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(db_session):
-    """FastAPI test client that uses the test DB session."""
+    """FastAPI client with DB session override."""
 
     def override_get_db():
         try:
@@ -57,5 +59,6 @@ def client(db_session):
             db_session.close()
 
     app.dependency_overrides[get_db] = override_get_db
-    yield TestClient(app)
+    with TestClient(app) as c:
+        yield c
     app.dependency_overrides.clear()

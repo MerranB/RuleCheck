@@ -49,8 +49,8 @@ jobs:
             sleep 2
           done
 
-      - name: Run unit tests
-        run: pytest -m "unit"
+      - name: Run tests
+        run: pytest
 
       - name: Run integration and migration tests
         if: github.ref == 'refs/heads/qa'

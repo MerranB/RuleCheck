@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class RuleBase(BaseModel):
@@ -17,6 +17,4 @@ class RuleCreate(RuleBase):
 class RuleRead(RuleBase):
     id: int
     policy_id: int  # 👈 Show the parent Policy id when reading
-
-    class Config:
-        from_attributes = True  # (was orm_mode in Pydantic v1)
+    model_config = ConfigDict(from_attributes=True)

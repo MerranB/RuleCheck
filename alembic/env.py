@@ -16,7 +16,8 @@ def run_migrations_online():
     logger.info("Starting online migration...")
 
     try:
-        connectable = create_engine(settings.database_url)
+        url = context.config.get_main_option("sqlalchemy.url") or settings.database_url
+        connectable = create_engine(url)
 
         with connectable.connect() as connection:
             context.configure(
@@ -42,7 +43,7 @@ def run_migrations_offline():
     logger.info("Starting offline migration...")
 
     try:
-        url = settings.database_url
+        url = context.config.get_main_option("sqlalchemy.url") or settings.database_url
         context.configure(
             url=url,
             target_metadata=Base.metadata,
