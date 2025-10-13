@@ -130,3 +130,34 @@ def test_delete_policy_with_rules_attached(client):
         data["detail"]
         == "Please remove all rules from the Policy before deleting the policy"
     )
+
+
+@pytest.mark.integration
+def test_edit_policy(client):
+    response = client.post(
+        "/rulecheck/policies/create_policy",
+        json={
+            "title": "Travel Policy",
+            "description": "Policy for the reimbursement of travel expensive",
+            "version": "1.0.0",
+            "effective_date": "2025-09-11T14:30:00Z",
+        },
+    )
+
+    data = response.json()
+    policy_id = str(data["id"])
+    assert response.status_code == 200
+
+    response_update = client.put(
+        "/rulecheck/policies/edit_policy/" + str(policy_id),
+        json={
+            "title": "The Travel Policy",
+            "description": "Policy for the reimbursement of travel expensive",
+            "version": "1.0.0",
+            "effective_date": "2025-09-11T14:30:00Z",
+        },
+    )
+
+    data = response_update.json()
+    assert response_update.status_code == 200
+    assert data["message"] == "Policy updated successfully"

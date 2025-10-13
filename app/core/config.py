@@ -7,6 +7,9 @@ class Settings(BaseSettings):
     app_name: str = "RuleCheck"
     log_level: str = "INFO"
     debug: bool = False
+    db_user: str
+    db_password: str
+    db_name: str
 
     database_url: str
 

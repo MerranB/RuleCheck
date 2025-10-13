@@ -45,18 +45,13 @@ jobs:
 
       - name: Wait for DB
         run: |
-          until pg_isready -h localhost -p 5432 -U $DB_USER; do
-            echo "Waiting for PostgreSQL to start..."
+          until pg_isready -h localhost -p 5432 -U ${{ secrets.DB_USER }}; do
+            echo "Waiting for postgres..."
             sleep 2
           done
-        env:
-          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
 
-      - name: Create test database
-        run: |
-          psql -h localhost -U $DB_USER -d postgres -c "CREATE DATABASE $DB_NAME;"
-        env:
-          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
+      - name: Run tests
+        run: pytest
 
       - name: Run integration and migration tests
         if: github.ref == 'refs/heads/qa'

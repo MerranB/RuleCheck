@@ -171,4 +171,4 @@ def test_delete_invalid_rule(client):
     response_delete_rule = client.delete("/rulecheck/rules/delete_rule/1000")
     assert response_delete_rule.status_code == 404
     data = response_delete_rule.json()
-    assert data["detail"] == "Policy with ID 1000 not found"
+    assert data["detail"] == "Rule with ID 1000 not found"
