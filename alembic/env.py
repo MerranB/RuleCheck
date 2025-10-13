@@ -10,6 +10,8 @@ from app.core.config import settings
 setup_logging()
 logger = logging.getLogger("rulecheck")
 
+setup_logging()
+logger = logging.getLogger("rulecheck")
 
 def run_migrations_online():
     logger.info("Starting online migration...")
