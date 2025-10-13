@@ -52,12 +52,36 @@ def delete_policy(policy_id, db: Session = Depends(get_db)):
         raise HTTPException(
             status_code=404, detail=f"Policy with ID {policy_id} not found"
         )
+
     if db.query(Rule).filter(Rule.policy_id == policy_id).all():
         raise HTTPException(
             status_code=409,
-            detail="Please remove all rules from the Policy before deleting the policy",
+            detail="Please remove all rules from the policy before deleting the policy",
         )
 
     db.delete(policy)
     db.commit()
     return {"message": f"Policy with ID {policy_id} deleted successfully"}
+
+
+@router.put("/edit_policy/{policy_id}", tags=["policies"])
+def edit_policy(
+    policy_id: int, policy_update: PolicyCreate, db: Session = Depends(get_db)
+):
+    # TODO: Restrict this endpoint to admin only
+    # TODO: Add role-based access (RBAC)
+    admin_lock()
+
+    existing_policy = db.query(Policy).filter(Policy.id == policy_id).first()
+    if not existing_policy:
+        raise HTTPException(
+            status_code=404, detail=f"Policy with id {policy_id} not found."
+        )
+
+    for key, value in policy_update.model_dump(exclude_unset=True).items():
+        setattr(existing_policy, key, value)
+
+    db.commit()
+    db.refresh(existing_policy)
+
+    return {"message": "Policy updated successfully", "id": existing_policy.id}

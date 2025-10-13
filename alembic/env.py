@@ -7,7 +7,6 @@ from app.db.database import Base
 from app.db import models  # noqa: F401
 from app.core.config import settings
 
-
 setup_logging()
 logger = logging.getLogger("rulecheck")
 
@@ -16,8 +15,7 @@ def run_migrations_online():
     logger.info("Starting online migration...")
 
     try:
-        url = context.config.get_main_option("sqlalchemy.url") or settings.database_url
-        connectable = create_engine(url)
+        connectable = create_engine(settings.database_url)
 
         with connectable.connect() as connection:
             context.configure(
@@ -43,7 +41,7 @@ def run_migrations_offline():
     logger.info("Starting offline migration...")
 
     try:
-        url = context.config.get_main_option("sqlalchemy.url") or settings.database_url
+        url = settings.database_url
         context.configure(
             url=url,
             target_metadata=Base.metadata,
@@ -58,7 +56,7 @@ def run_migrations_offline():
 
         script = ScriptDirectory.from_config(context.config)
         current_head = script.get_current_head()
-        logger.info(f"Offline migration. Head version: {current_head}")
+        logger.debug(f"Offline migration. Head version: {current_head}")
         logger.info("Finished offline migration.")
     except Exception as e:
         logger.exception("Error during offline migration")
