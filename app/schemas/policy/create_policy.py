@@ -1,8 +1,12 @@
 from pydantic import BaseModel
+from datetime import datetime
+
 
 class PolicyBase(BaseModel):
-    name: str
-    description: str | None = None
+    title: str
+    description: str
+    version: str
+    effective_date: datetime
 
 
 class PolicyCreate(PolicyBase):

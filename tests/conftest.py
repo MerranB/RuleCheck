@@ -1,10 +1,10 @@
 import pytest
 from testcontainers.postgres import PostgresContainer
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
-from alembic import command
-from alembic.config import Config
 from fastapi.testclient import TestClient
+from app.db.database import Base
+import app.db.models
 
 from app.main import app
 from app.db.database import get_db
@@ -18,26 +18,21 @@ def postgres_container():
 
 @pytest.fixture(scope="session")
 def migrated_engine(postgres_container):
-    engine = create_engine(postgres_container.get_connection_url())
-
-    alembic_cfg = Config("alembic.ini")
-    alembic_cfg.set_main_option(
-        "sqlalchemy.url", postgres_container.get_connection_url()
-    )
-    command.upgrade(alembic_cfg, "head")
-
+    db_url = postgres_container.get_connection_url()
+    engine = create_engine(db_url)
+    Base.metadata.create_all(bind=engine)
+    inspector = inspect(engine)
+    print("✅ Tables in test DB:", inspector.get_table_names())
     yield engine
-
     engine.dispose()
 
 
-@pytest.fixture()
+@pytest.fixture
 def db_session(migrated_engine):
-    """Provide a clean database session for each test."""
     connection = migrated_engine.connect()
     transaction = connection.begin()
-    SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=connection)
-    session = SessionLocal()
+    session_local = sessionmaker(autocommit=False, autoflush=False, bind=connection)
+    session = session_local()
 
     yield session
 
@@ -46,10 +41,8 @@ def db_session(migrated_engine):
     connection.close()
 
 
-@pytest.fixture()
+@pytest.fixture
 def client(db_session):
-    """FastAPI test client that uses the test DB session."""
-
     def override_get_db():
         try:
             yield db_session
@@ -57,5 +50,6 @@ def client(db_session):
             db_session.close()
 
     app.dependency_overrides[get_db] = override_get_db
-    yield TestClient(app)
+    with TestClient(app) as c:
+        yield c
     app.dependency_overrides.clear()

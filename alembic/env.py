@@ -7,10 +7,11 @@ from app.db.database import Base
 from app.db import models  # noqa: F401
 from app.core.config import settings
 
-
 setup_logging()
 logger = logging.getLogger("rulecheck")
 
+setup_logging()
+logger = logging.getLogger("rulecheck")
 
 def run_migrations_online():
     logger.info("Starting online migration...")
@@ -57,7 +58,7 @@ def run_migrations_offline():
 
         script = ScriptDirectory.from_config(context.config)
         current_head = script.get_current_head()
-        logger.info(f"Offline migration. Head version: {current_head}")
+        logger.debug(f"Offline migration. Head version: {current_head}")
         logger.info("Finished offline migration.")
     except Exception as e:
         logger.exception("Error during offline migration")
