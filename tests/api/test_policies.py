@@ -128,7 +128,7 @@ def test_delete_policy_with_rules_attached(client):
     assert response_delete.status_code == 409
     assert (
         data["detail"]
-        == "Please remove all rules from the Policy before deleting the policy"
+        == "Please remove all rules from the policy before deleting the policy"
     )
 
 
